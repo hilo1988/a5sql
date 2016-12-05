@@ -1,0 +1,16 @@
+package {package};
+
+import lombok.Data;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+{imports}
+
+@Entity(name = "{entityName}")
+@Table(name = "{tableName}")
+@Data
+public class {entityName} {
+
+{fields}
+
+}
