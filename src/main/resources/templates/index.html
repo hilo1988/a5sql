@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8" />
+    <title>HTML5サンプル</title>
+</head>
+<body>
+    <form method="POST" enctype="multipart/form-data" th:action="@{/csv}">
+
+        ZIPファイル：<input type="file" name="zip" /><br />
+        <input type="submit"  value="アップロード" />
+
+    </form><br />
+
+</body>
+</html>
