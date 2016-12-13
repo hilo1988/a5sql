@@ -1,0 +1,13 @@
+TABLE_CATALOG,TABLE_SCHEMA,TABLE_NAME,INDEX_NAME,COLUMNS,IS_PRIMARY_KEY,UNIQUE,CREATE_OPTION
+,,m_admin,m_admin_login_id_key,login_id,,Constraint,
+,,m_admin,index_admin_loginid_password,"login_id,password",,NO,
+,,m_locale,m_locale_locale_key,locale,,Constraint,
+,,m_member,m_member_facebook_id_key,facebook_id,,YES,
+,,m_member,m_member_twitter_id_key,twitter_id,,YES,
+,,m_member,m_member_worldtalk_id_key,worldtalk_id,,YES,
+,,m_member,index_member_mailaddress_password,"mail_address,password",,NO,
+,,m_member,m_member_worldtalk_id_key,worldtalk_id,,Constraint,
+,,t_friend,index_friend_memberId,member_id,,NO,
+,,t_friend_request,index_frendrequest_fromid,from_id,,NO,
+,,t_friend_request,index_frendrequest_toid,to_id,,NO,
+,,t_member_device,,device_version,,YES,
