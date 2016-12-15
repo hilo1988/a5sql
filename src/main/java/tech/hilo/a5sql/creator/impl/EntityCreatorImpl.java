@@ -5,20 +5,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.CaseFormat;
 
 import tech.hilo.a5sql.valueobject.Column;
 import tech.hilo.a5sql.valueobject.EntityInfo;
+import tech.hilo.a5sql.valueobject.JavaType;
 import tech.hilo.a5sql.valueobject.Table;
 import tech.hilo.a5sql.creator.EntityCreator;
 
+
 public class EntityCreatorImpl implements EntityCreator {
 	
-	private static final String PACKAGE_FORMAT = "import %s;\n";
+	private static final String PACKAGE_FORMAT = "import %s;";
 	
 	private static final String TEMPLATE;
 	
@@ -31,12 +35,26 @@ public class EntityCreatorImpl implements EntityCreator {
 	@Override
 	public EntityInfo write(String packageName, String baseClassName) {
 		String entityName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, table.getName());
-		String packages = createPackages();
+		final String packages;
 		String fields = createFields();
+
+		final String extend;
+		final String equalsAndHashCode;
+		if (StringUtils.isNotBlank(baseClassName)) {
+		    extend = String.format(" extends %s", baseClassName);
+		    packages  = createPackages("lombok.EqualsAndHashCode");
+            equalsAndHashCode = "@EqualsAndHashCode(callSuper = false)";
+        } else {
+            extend = " implements Serializable";
+            packages = createPackages("java.io.Serializable");
+            equalsAndHashCode = "";
+        }
 		
 		String entity = TEMPLATE.replaceAll("\\{entityName\\}", entityName)
 				.replaceAll("\\{imports\\}", packages)
 				.replaceAll("\\{fields\\}", fields)
+                .replaceAll("\\{extends\\}", extend)
+                .replaceAll("\\{equalsAndHashCode\\}", equalsAndHashCode)
 				.replaceAll("\\{tableName\\}", table.getName())
 				.replaceAll("\\{package\\}", packageName);
 
@@ -48,15 +66,38 @@ public class EntityCreatorImpl implements EntityCreator {
 	/**
 	 * パッケージインポート作成
 	 */
-	private String createPackages() {
-		List<String> packages = table.getColumns()
+	private String createPackages(String... importPackages) {
+		Set<String> packages = table.getColumns()
 		.stream()
 		.map(Column::getJavaType)
 		.filter(type -> StringUtils.isNotBlank(type.getPackageName()))
-		.distinct()
-		.map(c -> String.format(PACKAGE_FORMAT, c.getPackageName()))
-		.collect(Collectors.toList());
-		return StringUtils.join(packages, "\n");
+		.map(JavaType::getPackageName)
+		.collect(Collectors.toSet());
+
+		table.getColumns()
+                .stream()
+                .filter(Column::isSerial)
+                .forEach(c -> {
+                    packages.add("javax.persistence.GeneratedValue");
+                    packages.add("javax.persistence.GenerationType");
+                });
+
+        table.getColumns()
+                .stream()
+                .filter(Column::isId)
+                .forEach(c -> packages.add("javax.persistence.Id"));
+
+
+
+		if (ArrayUtils.isNotEmpty(importPackages)) {
+            Arrays.stream(importPackages)
+                    .forEach(packages::add);
+        }
+
+		return StringUtils.join(packages.stream()
+                .distinct()
+                .map(p -> String.format(PACKAGE_FORMAT, p))
+                .iterator(), "\n");
 		
 	}
 	
