@@ -9,7 +9,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import com.google.common.base.CaseFormat;
 
 import lombok.Data;
-import tech.hilo.a5sql.creator.JavaTypeConverter;
+import tech.hilo.a5sql.converter.JavaTypeConverter;
+import tech.hilo.a5sql.factory.Factory;
 import tech.hilo.a5sql.util.Utils;
 
 /**
@@ -46,7 +47,7 @@ public class Column {
 		this.order = Integer.parseInt(row.getValue("ORDINAL_POSITION"));
 		this.isNullable = Utils.yesNoBoolValue(row.getValue("IS_NULLABLE"));
 		this.dbType = row.getValue("DATA_TYPE").toUpperCase();
-		this.javaType = JavaTypeConverter.getInstance().convert(dbType);
+		this.javaType = Factory.getJavaTypeConverter().convert(dbType);
 		String keyPosition = row.getValue("KEY_POSITION");
 		this.isId = NumberUtils.isDigits(keyPosition);
 	}

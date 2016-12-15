@@ -21,38 +21,45 @@ public class TableReaderImpl implements TableReader {
 	
 	List<Column> columns;
 
+
+
 	@Override
 	public List<Table> readTable(URL input, String charset) throws IOException, URISyntaxException {
-		
-		try (ZipFile zip  = new ZipFile(new File(input.toURI()))) {
-			Enumeration<? extends ZipEntry> enm = zip.entries();
-			while (enm.hasMoreElements()) {
-				ZipEntry entry = enm.nextElement();
-				final String name = entry.getName();
-				
-				
-				if (name.contains("TABLES")) {
-					createTable(zip.getInputStream(entry), charset);
-					continue;
-				}
-				
-				if (name.contains("COLUMNS")) {
-					createColumn(zip.getInputStream(entry), charset);
-					continue;
-				}				
-			}
-		}
+        return readTable(new File(input.toURI()), charset);
 
-		tables.forEach(table -> {
-			columns.stream().filter(c -> c.getTableName().equals(table.getName()))
-			.forEach(c -> table.addColumn(c));
-		});
-		
-		
-		return tables;
 	}
-	
-	private void createTable(InputStream input, String charset) throws IOException {
+
+    @Override
+    public List<Table> readTable(File file, String charset) throws IOException {
+        try (ZipFile zip  = new ZipFile(file)) {
+            Enumeration<? extends ZipEntry> enm = zip.entries();
+            while (enm.hasMoreElements()) {
+                ZipEntry entry = enm.nextElement();
+                final String name = entry.getName();
+
+
+                if (name.contains("TABLES")) {
+                    createTable(zip.getInputStream(entry), charset);
+                    continue;
+                }
+
+                if (name.contains("COLUMNS")) {
+                    createColumn(zip.getInputStream(entry), charset);
+                    continue;
+                }
+            }
+        }
+
+        tables.forEach(table -> {
+            columns.stream().filter(c -> c.getTableName().equals(table.getName()))
+                    .forEach(c -> table.addColumn(c));
+        });
+
+
+        return tables;
+    }
+
+    private void createTable(InputStream input, String charset) throws IOException {
 		tables = Factory.getCsvReader().readCsv(input, charset, row -> new Table(row));
 	}
 	

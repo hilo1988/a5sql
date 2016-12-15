@@ -1,11 +1,11 @@
-package tech.hilo.a5sql.creator.impl;
+package tech.hilo.a5sql.converter.impl;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import tech.hilo.a5sql.creator.JavaTypeConverter;
+import tech.hilo.a5sql.converter.JavaTypeConverter;
 import tech.hilo.a5sql.valueobject.JavaType;
 
 public class JavaTypeConverterImpl implements JavaTypeConverter {

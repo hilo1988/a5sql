@@ -1,4 +1,4 @@
-package tech.hilo.a5sql.writer.impl;
+package tech.hilo.a5sql.creator.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -11,10 +11,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.CaseFormat;
 
+import tech.hilo.a5sql.valueobject.Column;
+import tech.hilo.a5sql.valueobject.EntityInfo;
 import tech.hilo.a5sql.valueobject.Table;
-import tech.hilo.a5sql.writer.TableWriter;
+import tech.hilo.a5sql.creator.EntityCreator;
 
-public class TableWriterImpl implements TableWriter {
+public class EntityCreatorImpl implements EntityCreator {
 	
 	private static final String PACKAGE_FORMAT = "import %s;\n";
 	
@@ -22,12 +24,12 @@ public class TableWriterImpl implements TableWriter {
 	
 	private final Table table;
 	
-	public TableWriterImpl(Table table) {
+	public EntityCreatorImpl(Table table) {
 		this.table = table;
 	}
 
 	@Override
-	public void write(String packageName) throws IOException {
+	public EntityInfo write(String packageName, String baseClassName) {
 		String entityName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, table.getName());
 		String packages = createPackages();
 		String fields = createFields();
@@ -37,8 +39,9 @@ public class TableWriterImpl implements TableWriter {
 				.replaceAll("\\{fields\\}", fields)
 				.replaceAll("\\{tableName\\}", table.getName())
 				.replaceAll("\\{package\\}", packageName);
-		
-		System.out.println(entity);
+
+
+        return new EntityInfo(entityName, entity);
 	}
 	
 	
@@ -48,7 +51,7 @@ public class TableWriterImpl implements TableWriter {
 	private String createPackages() {
 		List<String> packages = table.getColumns()
 		.stream()
-		.map(c -> c.getJavaType())
+		.map(Column::getJavaType)
 		.filter(type -> StringUtils.isNotBlank(type.getPackageName()))
 		.distinct()
 		.map(c -> String.format(PACKAGE_FORMAT, c.getPackageName()))
@@ -74,8 +77,7 @@ public class TableWriterImpl implements TableWriter {
 			sb.append("\n\n");
 		});
 		
-		List<String> tabList = Arrays.asList(sb.toString().split("\\n"))
-			.stream()
+		List<String> tabList = Arrays.stream(sb.toString().split("\\n"))
 			.map(line -> StringUtils.isBlank(line) ? "" : "\t".concat(line))
 			.collect(Collectors.toList());
 			
@@ -85,7 +87,7 @@ public class TableWriterImpl implements TableWriter {
 	
 	
 	static {
-		try (InputStream stream = TableWriterImpl.class.getClassLoader().getResourceAsStream("entityTemplate.txt")) {
+		try (InputStream stream = EntityCreatorImpl.class.getClassLoader().getResourceAsStream("entityTemplate.txt")) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			int val;
 			while ((val = stream.read()) >= 0) {

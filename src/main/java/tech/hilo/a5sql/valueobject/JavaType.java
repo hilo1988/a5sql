@@ -4,6 +4,9 @@ package tech.hilo.a5sql.valueobject;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Javaの型情報
+ */
 @Data
 @RequiredArgsConstructor
 public class JavaType {

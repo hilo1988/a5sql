@@ -7,6 +7,13 @@
 <body>
     <form method="POST" enctype="multipart/form-data" th:action="@{/csv}">
 
+        パッケージ名<br/>
+        <input type="text" name="packageName" />
+        ベースクラス名<br />
+        <input type="text" name="baseClassName" /><br />
+
+
+
         ZIPファイル：<input type="file" name="zip" /><br />
         <input type="submit"  value="アップロード" />
 

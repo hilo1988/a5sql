@@ -20,4 +20,6 @@ public class A5SqlForm implements Serializable {
     private String baseClassName;
 
     private String packageName;
+
+    private String charset = "SHIFT_JIS";
 }

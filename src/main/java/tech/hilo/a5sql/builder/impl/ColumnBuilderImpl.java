@@ -11,7 +11,7 @@ public class ColumnBuilderImpl implements ColumnBuilder {
 
 	@Override
 	public String build(Table table) {
-		table.getColumns().forEach(c -> createColumn(c));
+		table.getColumns().forEach(this::createColumn);
 		return columnSb.toString();
 	}
 	
