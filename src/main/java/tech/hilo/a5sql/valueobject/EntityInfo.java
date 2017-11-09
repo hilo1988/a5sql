@@ -20,7 +20,12 @@ public class EntityInfo implements Serializable {
     /** 内容 */
     private final String content;
 
+    /**
+     * 拡張子
+     */
+    private final String extension;
+
     public String getFileName() {
-        return fileName + ".java";
+        return String.format("%s.%s", fileName, extension);
     }
 }

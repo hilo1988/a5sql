@@ -3,9 +3,11 @@ package tech.hilo.a5sql.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import tech.hilo.a5sql.valueobject.OrmType;
 import tech.hilo.a5sql.facade.A5SqlFacade;
 import tech.hilo.a5sql.factory.Factory;
 import tech.hilo.a5sql.form.A5SqlForm;
@@ -24,10 +26,11 @@ import java.util.Date;
 @Controller
 public class IndexController {
 
-    Logger logger = LogManager.getLogger(this.getClass());
+    private final Logger logger = LogManager.getLogger(this.getClass());
 
     @RequestMapping()
-    public String index() {
+    public String index(Model model) {
+        model.addAttribute("ormList", OrmType.getTypeList());
         return "index";
     }
 

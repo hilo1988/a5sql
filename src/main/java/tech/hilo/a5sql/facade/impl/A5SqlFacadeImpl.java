@@ -38,7 +38,7 @@ public class A5SqlFacadeImpl implements A5SqlFacade {
                 .readTable(tempInputFile, form.getCharset());
 
         List<File> outputFiles = tables.stream()
-                .map(table -> Factory.getTableWriter(table).write(form.getPackageName(), form.getBaseClassName()))
+                .map(table -> Factory.getTableWriter(table, form.getOrmType()).write(form.getPackageName(), form.getBaseClassName()))
                 .map(this::createEntityFile)
                 .collect(Collectors.toList());
 

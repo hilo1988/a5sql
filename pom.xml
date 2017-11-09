@@ -77,6 +77,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jboss.dna</groupId>
+            <artifactId>dna-common</artifactId>
+            <version>0.7</version> <!-- 最新はhttps://repository.jboss.org/nexus/content/groups/public-jboss/org/jboss/dna/dna-common/ 参照 -->
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
@@ -92,5 +98,12 @@
         </dependency>
 
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>jboss-maven2-release-repository</id>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
+        </repository>
+    </repositories>
 
 </project>

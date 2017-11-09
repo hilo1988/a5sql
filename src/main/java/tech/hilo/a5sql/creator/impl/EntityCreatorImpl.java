@@ -1,30 +1,27 @@
 package tech.hilo.a5sql.creator.impl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.google.common.base.CaseFormat;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.base.CaseFormat;
-
+import tech.hilo.a5sql.creator.EntityCreator;
+import tech.hilo.a5sql.util.IoUtils;
 import tech.hilo.a5sql.valueobject.Column;
 import tech.hilo.a5sql.valueobject.EntityInfo;
 import tech.hilo.a5sql.valueobject.JavaType;
 import tech.hilo.a5sql.valueobject.Table;
-import tech.hilo.a5sql.creator.EntityCreator;
+
+import java.awt.image.PackedColorModel;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 public class EntityCreatorImpl implements EntityCreator {
 	
 	private static final String PACKAGE_FORMAT = "import %s;";
 	
-	private static final String TEMPLATE;
+	private static final String TEMPLATE = IoUtils.readResourceFile("entityTemplate.txt");
 	
 	private final Table table;
 	
@@ -59,7 +56,7 @@ public class EntityCreatorImpl implements EntityCreator {
 				.replaceAll("\\{package\\}", packageName);
 
 
-        return new EntityInfo(entityName, entity);
+        return new EntityInfo(entityName, entity, "java");
 	}
 	
 	
@@ -90,8 +87,7 @@ public class EntityCreatorImpl implements EntityCreator {
 
 
 		if (ArrayUtils.isNotEmpty(importPackages)) {
-            Arrays.stream(importPackages)
-                    .forEach(packages::add);
+			packages.addAll(Arrays.asList(importPackages));
         }
 
 		return StringUtils.join(packages.stream()
@@ -125,21 +121,4 @@ public class EntityCreatorImpl implements EntityCreator {
 		return StringUtils.join(tabList, "\n");
 	}
 	
-	
-	
-	static {
-		try (InputStream stream = EntityCreatorImpl.class.getClassLoader().getResourceAsStream("entityTemplate.txt")) {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			int val;
-			while ((val = stream.read()) >= 0) {
-				baos.write(val);
-			}
-			TEMPLATE = new String(baos.toByteArray());
-			baos.close();
-			stream.close();
-		} catch (IOException e) {
-			throw new RuntimeException("entityTemplate.txt が見つかりません。");
-		}
-	}
-
 }

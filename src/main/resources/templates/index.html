@@ -1,23 +1,35 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <title>HTML5サンプル</title>
+    <style>
+
+        #contaier {
+            width: 400px;
+            margin: auto;
+        }
+    </style>
 </head>
 <body>
-    <form method="POST" enctype="multipart/form-data" th:action="@{/csv}">
+<div id="contaier">
+    <form method="POST" enctype="multipart/form-data" th:action="@{/csv}" style="margin:0 auto 0 auto;">
 
         パッケージ名<br/>
         <input type="text" name="packageName" /><br /><br />
         ベースクラス名<br />
         <input type="text" name="baseClassName" /><br /><br />
+        ORM<br />
+        <select name="ormType">
+            <option th:each="orm : ${ormList}" th:value="${orm.id}" th:text="${orm.name}" th:inline="text" />
+        </select>
+        <br /><br />
 
-
-
-        ZIPファイル：<input type="file" name="zip" /><br />
+        ZIPファイル：<input type="file" name="zip" /><br /><br />
         <input type="submit"  value="アップロード" />
 
     </form><br />
+</div>
 
 </body>
 </html>

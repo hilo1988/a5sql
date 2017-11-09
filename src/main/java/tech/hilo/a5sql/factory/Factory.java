@@ -3,6 +3,7 @@ package tech.hilo.a5sql.factory;
 import tech.hilo.a5sql.converter.JavaTypeConverter;
 import tech.hilo.a5sql.converter.impl.JavaTypeConverterImpl;
 import tech.hilo.a5sql.creator.ZipCreator;
+import tech.hilo.a5sql.creator.impl.EloquentEntityCreatorImpl;
 import tech.hilo.a5sql.creator.impl.ZipCreatorImpl;
 import tech.hilo.a5sql.facade.A5SqlFacade;
 import tech.hilo.a5sql.facade.impl.A5SqlFacadeImpl;
@@ -11,6 +12,7 @@ import tech.hilo.a5sql.reader.CsvReader;
 import tech.hilo.a5sql.reader.TableReader;
 import tech.hilo.a5sql.reader.impl.CsvReaderImpl;
 import tech.hilo.a5sql.reader.impl.TableReaderImpl;
+import tech.hilo.a5sql.valueobject.OrmType;
 import tech.hilo.a5sql.valueobject.Table;
 import tech.hilo.a5sql.creator.EntityCreator;
 import tech.hilo.a5sql.creator.impl.EntityCreatorImpl;
@@ -49,8 +51,14 @@ public class Factory {
     /**
      * テーブルライターの取得
      */
-	public static EntityCreator getTableWriter(Table table) {
-		return new EntityCreatorImpl(table);
+	public static EntityCreator getTableWriter(Table table, int ormType) {
+	    switch (ormType) {
+            case OrmType.ELOQUENT:
+                return new EloquentEntityCreatorImpl(table);
+            default:
+                return new EntityCreatorImpl(table);
+        }
+
 	}
 
     /**

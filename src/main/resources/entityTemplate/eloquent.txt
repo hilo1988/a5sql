@@ -1,0 +1,11 @@
+<?php
+
+namespace {namespace};
+
+class {entityName}{extends} {
+
+    protected $table = '{tableName}';
+
+    protected $fillable = [{fillable}];
+
+}
